@@ -5,21 +5,37 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Alura\Mvc\Entity\Video;
 use Alura\Mvc\Repository\VideoRepository;
 
-$host = 'localhost'; // ou o host do seu servidor MySQL
-$port = '3306'; // porta padrão do MySQL
-$dbname = 'carefyteste'; // substitua pelo nome do seu banco de dados
-$user = 'root'; // substitua pelo seu usuário do MySQL
-$pass = '36634497'; // substitua pela sua senha do MySQL
+$host = 'localhost';
+$port = '3306';
+$dbname = 'CarefyTeste';
+$user = 'root';
+$pass = '36634497';
 
 try {
-    $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
+    $dsn = "mysql:host=$host;port=$port;charset=utf8mb4";
     $pdo = new PDO($dsn, $user, $pass);
-    // Configura o modo de erro do PDO para exceções
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    echo "Conexão com o banco de dados estabelecida com sucesso!";
-} catch (PDOException $e) {
-    die('Erro na conexão com o banco de dados: ' . $e->getMessage());
-}
+    $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname`");
+    echo "Banco de dados `$dbname` verificado/criado com sucesso!<br>";
 
-$pdo->exec('ALTER TABLE censo ADD COLUMN guia VARCHAR(255) NOT NULL;');
+    
+    $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
+    $pdo = new PDO($dsn, $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Conexão com o banco de dados `$dbname` estabelecida com sucesso!<br>";
+
+    
+    $pdo->exec('CREATE TABLE IF NOT EXISTS Censos (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nome VARCHAR(255) NOT NULL,
+        nascimento DATE NOT NULL,
+        codigo VARCHAR(255) NOT NULL,
+        entrada DATE NOT NULL,
+        saida DATE,
+        guia VARCHAR(255) NOT NULL
+    )');
+    echo "Tabela `Censos` verificada/criada com sucesso!";
+} catch (PDOException $e) {
+    die('Erro na operação com o banco de dados: ' . $e->getMessage());
+}
